@@ -32,13 +32,14 @@ contract VotingContract {
         adminAccountIds[address(0xAe1DdF39a90FeeAc8708739aacCa6e8781daC6c6)] = true;
         adminAccountIds[address(0xAe1DdF39a90FeeAc8708739aacCa6e8781daC6c6)] = true;
         adminAccountIds[address(0x4b3527ad07fA1Ab3E7bFe83ec18cC6cB57d6c908)] = true;
+        adminAccountIds[address(0x76D81132eb074d4d2277fB10FdF14177fBFA7341)] = true;
     }
 
     function addCandidate(string memory _name) public {
         require(adminAccountIds[msg.sender], "Only admin accounts can add the candidate"); // Check if msg.sender is an admin
         candidatesCount++;
         candidates[candidatesCount] = Candidate(candidatesCount, _name, 0);
-        votingEndTime = block.timestamp;
+        
     }
 
     function vote (uint _candidateId) public {
