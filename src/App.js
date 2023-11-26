@@ -1,20 +1,20 @@
-import { useState } from "react";
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Home from "./Home.js";
 import Admin from "./components/admin/Admin.js";
+import Header from "./components/header/Header.js"
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 function App({ }) {
 
-  const router = createBrowserRouter([
-    { path: '/', element: <Home /> },
-    { path: '/admin', element: <Admin/> }
-  ])
-
+  const admin = "0x76D81132eb074d4d2277fB10FdF14177fBFA7341";
 
   return (
-    <>
-      <RouterProvider router={router} />
-    </>
+    <Router>
+      <Header />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/admin" element={<Admin />} />
+      </Routes>
+    </Router>
   );
 }
 

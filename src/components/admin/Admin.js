@@ -1,10 +1,10 @@
 import React from 'react';
 import { useState } from "react";
-import Header from '../header/Header';
 import Leaderboard from '../leaderboard/Leaderboard';
 import Wallet from '../Wallet/Wallet';
 import UpdateCandi from '../updateCandidate/UpdateCandi';
 import "./Admin.css"
+import Footer from '../footer/Footer';
 
 
 const Admin = () => {
@@ -18,17 +18,18 @@ const Admin = () => {
         setState(state);
     }
 
+    const [refreshKey, setRefreshKey] = useState(0);
+    const refreshCandidateList = () => {
+        setRefreshKey(oldKey => oldKey + 1);
+    };
+
     return (
         <>
-            <div className="admin-note">
-                <p className='admin-welcome'>Welcome Admin!</p>
-            </div>
             <Wallet saveState={saveState}></Wallet>
-            <Header></Header>
-            <UpdateCandi state={state}></UpdateCandi>
-
-            <Leaderboard state={state}></Leaderboard>
-
+            <h4 className='adminHeading'>Admin Panel</h4>
+            <UpdateCandi state={state} refreshCandidateList={refreshCandidateList}></UpdateCandi>
+            <Leaderboard state={state} isAdmin={true} refreshKey={refreshKey}></Leaderboard>
+            <Footer></Footer>
         </>
     );
 

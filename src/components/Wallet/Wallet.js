@@ -25,7 +25,7 @@ const Wallet = ({ saveState, saveAccount, saveConnected}) => {
                     await window.ethereum.request({ method: 'eth_requestAccounts' });
                     const contract = new web3.eth.Contract(
                         ABI,
-                        "0xC30Ae00F96e44a5A0538BDB96623Cc6BffD0CF2E"
+                        "0xB83d626e8B4e2a53891a8e5070Ad87cdc6C09394"
                     );
                     const accounts = await web3.eth.getAccounts();
                     saveAccount && saveAccount(accounts);
@@ -42,10 +42,8 @@ const Wallet = ({ saveState, saveAccount, saveConnected}) => {
         };
 
         connectWallet();
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    }, []); 
 
-    //{connected ? "Connected to:" : "Please connect your MetaMask Wallet!"} 
-    // Empty dependency array ensures it runs only once
     return (
         <>
         </>

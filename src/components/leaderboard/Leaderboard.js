@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import './Leaderboard.css'; 
 import CandidatesData from "../candidates/Candidatesdata.js";
 
-const Leaderboard = () => {
+const Leaderboard = (props) => {
 
     const [candidates, setCandidates] = useState([]);
 
@@ -12,12 +12,12 @@ const Leaderboard = () => {
 
     return (
         <>
-        <CandidatesData saveCandidates={saveCandidates}/>
+        <CandidatesData saveCandidates={saveCandidates} refreshKey={props.refreshKey}/>
         
             <div className="body">
                 <div className="table">
                     <div className="table_header">
-                        <h1>Leaderboard</h1>
+                        <h1>Candidates List</h1>
                     </div>
                     <div className="table_body">
                         <table>
@@ -25,7 +25,9 @@ const Leaderboard = () => {
                                 <tr>
                                     <th>Id</th>
                                     <th>Candidate Name</th>
-                                    <th>Votes</th>
+                                    {
+                                        (props.isAdmin) ? <th>Votes</th> : <></>
+                                    }
                                 </tr>
                             </thead>
                             <tbody>
@@ -33,7 +35,9 @@ const Leaderboard = () => {
                                     <tr key={candidate.id}>
                                         <td>{candidate.id}</td>
                                         <td>{candidate.name}</td>
-                                        <td><strong>{candidate.voteCount}</strong></td>
+                                        {
+                                            (props.isAdmin) ? <td><strong>{candidate.voteCount}</strong></td> : <></>
+                                        }
                                     </tr>
                                 ))}
                             </tbody>
@@ -41,7 +45,6 @@ const Leaderboard = () => {
                     </div>
                 </div>
             </div>
-            {/* <Vote candidates = {candidates} state={state}/> */}
         </>
     );
 };

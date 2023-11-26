@@ -1,6 +1,6 @@
 import { useState } from "react";
 import CandidatesData from "../candidates/Candidatesdata";
-import './Vote.css'; // Import your CSS file
+import './Vote.css'; 
 
 
 const Vote = ({ state }) => {
@@ -22,14 +22,14 @@ const Vote = ({ state }) => {
         }
         if (selectedCandidate) {
             if (voted) {
-                console.log("You have already voted!");
+                console.log("You Voted already!");
             } else {
                 handleVote();
             }
         } else {
             closePopup();
             console.log("No candi selected! Caller: openPopupFunc")
-            alert("No Candidate Selected!");
+            alert("Select a candidate first");
         }
 
     }
@@ -58,12 +58,11 @@ const Vote = ({ state }) => {
         VoteStatus && console.log(VoteStatus)
         setVoted(VoteStatus);
         if (VoteStatus === true) {
-           // console.log("Already Voted!!");
             const popuph2 = document.querySelector('.popup-h2');
             const popupP = document.querySelector('.popup-p');
             const popupimg = document.querySelector('.img-popup');
             popuph2.innerHTML = "Sorry!"
-            popupP.innerHTML = "You have already Voted!"
+            popupP.innerHTML = "You Voted already!"
             if (popupimg) {
                 popupimg.classList.add('img-popup-cross');
             }
@@ -73,7 +72,6 @@ const Vote = ({ state }) => {
 
 
     const handleVote = async (event) => {
-        // event.preventDefault();
         const { contract } = state;
         const { accounts } = state;
 
@@ -91,7 +89,7 @@ const Vote = ({ state }) => {
             if (popupimg) {
                 popupimg.classList.add('img-popup-tick');
             }
-            popuph2.innerHTML = "Congrats!"
+            popuph2.innerHTML = "Congratulations!"
             popupP.innerHTML = "Your Vote is Submitted on the Blockchain!"
             
         } else {
@@ -126,7 +124,6 @@ const Vote = ({ state }) => {
                     </div>
                 </div>
             </div>
-
 
         </>
     );

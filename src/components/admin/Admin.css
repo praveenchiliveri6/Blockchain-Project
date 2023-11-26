@@ -1,16 +1,10 @@
-.admin-note {
-    width: 100vw;
-    height: 20px;
-    background-color: red;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding-right: 20px; /* Adjust padding values accordingly */
-    padding-left: 20px; /* Adjust padding values accordingly */
-    box-sizing: border-box;
-    overflow-x: hidden;
-}
-
-.admin-welcome {
-    font-weight: bold;
+.adminHeading {
+    background-color: black; 
+    color: #32CD32; 
+    font-size: 2em; 
+    padding-left: 10%; 
+    margin: 0; 
+    padding-top: 50px; 
+    padding-bottom: 30px; 
+    font-family: 'Ninja Naruto', sans-serif; 
 }

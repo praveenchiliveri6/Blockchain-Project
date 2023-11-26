@@ -1,9 +1,7 @@
 import { useState } from "react";
 import "./UpdateCandi.css"
 
-const UpdateCandi = ({ state }) => {
-
-
+const UpdateCandi = ({ state, refreshCandidateList }) => {
 
     const [input, setInput] = useState('');
     const [candidates, setCandidates] = useState([]);
@@ -12,14 +10,6 @@ const UpdateCandi = ({ state }) => {
         setCandidates(arr);
     }
 
-    // const storeInput = () => {
-    //     const inputField = document.getElementById('textInput');
-    //     const storedInput = inputField.value;
-    //     setInput(storedInput)
-    //     input && AddCandi();
-    // }
-
-
     const { contract } = state;
     const { accounts } = state;
 
@@ -27,13 +17,48 @@ const UpdateCandi = ({ state }) => {
         return;
     }
 
+    const openPopup = (message, isSuccess) => {
+        const overlay = document.querySelector('.overlay');
+        const popup = document.querySelector('.popup');
+        const popuph2 = document.querySelector('.popup-h2');
+        const popupP = document.querySelector('.popup-p');
+        const popupimg = document.querySelector('.img-popup');
+    
+        if (isSuccess) {
+            popupimg.classList.add('img-popup-tick');
+        } else {
+            popupimg.classList.add('img-popup-cross');
+        }
+    
+        popuph2.innerHTML = message.title;
+        popupP.innerHTML = message.body;
+        
+        if (overlay && popup) {
+            overlay.style.display = 'block';
+            popup.classList.add('open-popup');
+        }
+
+        if (popup) {
+            popup.classList.add('open-popup');
+        }
+    };
+
+    const closePopup = () => {
+        const overlay = document.querySelector('.overlay');
+        const popup = document.querySelector('.popup');
+        if (overlay && popup) {
+            overlay.style.display = 'none';
+            popup.classList.remove('open-popup');
+        }
+    };
+
     const AddCandi = async () => {
         const currentAcc = await accounts[0];
         console.log(currentAcc);
-        const admin = "0xAe1DdF39a90FeeAc8708739aacCa6e8781daC6c6";
+        const admin = "0x76D81132eb074d4d2277fB10FdF14177fBFA7341";
 
         if (currentAcc !== admin) {
-            alert("Only Admin Can Add Candidates!");
+            openPopup({ title: "Access Denied", body: "Only Admin Can Add Candidates!" }, false);
         } else {
 
             const inputField = document.getElementById('textInput');
@@ -43,24 +68,33 @@ const UpdateCandi = ({ state }) => {
             }
             console.log(storedInput)
             const currentAccount = accounts[0];
-            alert("Great, Press Ok To continue!");
 
             const transaction = await contract.methods.addCandidate(storedInput).send({ from: currentAccount });
             console.log('Transaction is done:', transaction);
-            alert("The Candidate Is Added!");
+            openPopup({ title: "Candidate Added", body: "The Candidate Is Added!" }, true);
+            refreshCandidateList();
             document.getElementById('textInput').value="";
         }
-
-
     }
 
     return (
         <>
+
             <div className="input-button-container">
                 <div className="text_btn">
                     <h3 className="h3">Add Candidate!</h3>
                     <input type="text" id="textInput" className="custom-input" />
                     <button onClick={AddCandi} className="custom-button">Click to Store</button>
+                </div>
+            </div>
+
+            <div className="container1">
+                <div className="overlay" onClick={closePopup}></div>
+                <div className="popup">
+                    <img className="img-popup" />
+                    <h2 className="popup-h2">Please Wait!</h2>
+                    <p className="popup-p">Your transaction is in progress!</p>
+                    <button type="submit" className="btn" onClick={closePopup}>Close</button>
                 </div>
             </div>
 

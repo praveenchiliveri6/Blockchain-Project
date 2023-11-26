@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Wallet from "../Wallet/Wallet";
 
-const CandidatesData = ({ saveCandidates }) => {
+const CandidatesData = ({ saveCandidates, refreshKey }) => {
     const [state, setState] = useState({
         web: null,
         contract: null,
@@ -27,7 +27,7 @@ const CandidatesData = ({ saveCandidates }) => {
             console.log(candidatesData)
         }
         fetchData();
-    },[state]);
+    },[state, refreshKey]);
 
     return (<>
         <Wallet saveState={saveState} />
