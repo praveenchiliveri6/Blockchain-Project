@@ -11,28 +11,42 @@ contract VotingContract {
     }
 
     mapping(address => bool) public voters;
-
+    mapping(uint => bool) public uniqueVoterIds;
     mapping(uint => Candidate) public candidates;
+    mapping(address => bool) public adminAccountIds;
     uint public candidatesCount=0;
+    uint public votingEndTime;
 
     event votedEvent (
         uint indexed _candidateId
     );
 
-    address public owner;
     constructor () public {
-        owner = msg.sender;
-        addCandidate("Samarth Ghante");
-        addCandidate("Kanishk Kumar");
+        addCandidate("Sumanth");
+        addCandidate("Ravi Kanth");
+        addCandidate("Praveen");
     }
 
     function addCandidate(string memory _name) public {
-        require(msg.sender == owner);
+        require(adminAccountIds[msg.sender], "Only admin accounts can add the candidate"); // Check if msg.sender is an admin
         candidatesCount++;
         candidates[candidatesCount] = Candidate(candidatesCount, _name, 0);
+        votingEndTime = block.timestamp;
+
+        // Initialize unique voter IDs
+        uniqueVoterIds[123] = true;
+        uniqueVoterIds[456] = true;
+        uniqueVoterIds[789] = true;
+
+        // Initialize admin account IDs
+        adminAccountIds[address(0xAe1DdF39a90FeeAc8708739aacCa6e8781daC6c6)] = true;
+        adminAccountIds[address(0xAe1DdF39a90FeeAc8708739aacCa6e8781daC6c6)] = true;
+        adminAccountIds[address(0x4b3527ad07fA1Ab3E7bFe83ec18cC6cB57d6c908)] = true;
     }
 
     function vote (uint _candidateId) public {
+        require(block.timestamp < votingEndTime, "Voting has ended");
+        require(!voters[msg.sender], "You have already voted");
         voters[msg.sender] = true;
         candidates[_candidateId].voteCount++;
         emit votedEvent(_candidateId);
@@ -46,5 +60,23 @@ contract VotingContract {
         }
 
         return result;
+    }
+
+    function getVotingEndTime() public view returns (uint) {
+        return votingEndTime;
+    }
+
+    function updateVotingEndTime(uint newTimeStamp) public {
+        require(adminAccountIds[msg.sender], "Only admin accounts can update the end time"); // Check if msg.sender is an admin
+        votingEndTime = newTimeStamp;
+    }
+
+    function checkIfVoterIdExists(uint voterId) public view returns (bool) {
+        return uniqueVoterIds[voterId];
+    }
+
+    // Updated function to check if an admin account exists
+    function checkIfAdminUser(address adminAccountId) public view returns (bool) {
+        return adminAccountIds[adminAccountId];
     }
 }
