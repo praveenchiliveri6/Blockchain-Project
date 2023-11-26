@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CandidatesData from "../candidates/Candidatesdata";
 import './Vote.css'; 
 
@@ -23,6 +23,7 @@ const Vote = ({ state }) => {
         }
         if (selectedCandidate) {
             if (voted) {
+                alert("You Voted already!")
                 console.log("You Voted already!");
             } else {
                 handleVote();
@@ -47,30 +48,55 @@ const Vote = ({ state }) => {
         setSelectedCandidate(event.target.value);
     };
 
-    const checker = async (event) => {
-        const { contract } = state;
-        const { accounts } = state;
-
-        if (!contract) {
-            return;
-        }
-        const currentAccount = accounts[0];
-        const VoteStatus = await contract.methods.voters(currentAccount).call();
-        VoteStatus && console.log(VoteStatus)
-        setVoted(VoteStatus);
-        if (VoteStatus === true) {
-            const popuph2 = document.querySelector('.popup-h2');
-            const popupP = document.querySelector('.popup-p');
-            const popupimg = document.querySelector('.img-popup');
-            popuph2.innerHTML = "Sorry!"
-            popupP.innerHTML = "You Voted already!"
-            if (popupimg) {
-                popupimg.classList.add('img-popup-cross');
+    useEffect(() => {
+        const checker = async (event) => {
+            const { contract } = state;
+            const { accounts } = state;
+    
+            if (!contract) {
+                return;
+            }
+            const currentAccount = accounts[0];
+            const VoteStatus = await contract.methods.voters(currentAccount).call();
+            VoteStatus && console.log(VoteStatus)
+            setVoted(VoteStatus.hasVoted)
+            if (VoteStatus === true) {
+                const popuph2 = document.querySelector('.popup-h2');
+                const popupP = document.querySelector('.popup-p');
+                const popupimg = document.querySelector('.img-popup');
+                popuph2.innerHTML = "Sorry!"
+                popupP.innerHTML = "You Voted already!"
+                if (popupimg) {
+                    popupimg.classList.add('img-popup-cross');
+                }
             }
         }
-    }
-    checker();
+        checker();
+    }, [state]);
 
+    // const checker = async (event) => {
+    //     const { contract } = state;
+    //     const { accounts } = state;
+
+    //     if (!contract) {
+    //         return;
+    //     }
+    //     const currentAccount = accounts[0];
+    //     const VoteStatus = await contract.methods.voters(currentAccount).call();
+    //     VoteStatus && console.log(VoteStatus)
+    //     setVoted(VoteStatus);
+    //     if (VoteStatus === true) {
+    //         const popuph2 = document.querySelector('.popup-h2');
+    //         const popupP = document.querySelector('.popup-p');
+    //         const popupimg = document.querySelector('.img-popup');
+    //         popuph2.innerHTML = "Sorry!"
+    //         popupP.innerHTML = "You Voted already!"
+    //         if (popupimg) {
+    //             popupimg.classList.add('img-popup-cross');
+    //         }
+    //     }
+    // }
+    // checker();
 
     const handleVote = async (event) => {
         const { contract } = state;
@@ -86,12 +112,13 @@ const Vote = ({ state }) => {
             if (votingEndTime < Date.now()/1000){
                 alert("Voting Session is closed!")
             } else{
-                const isVoterIdValid = await contract.methods.checkIfVoterIdExists(voterId).call();
+                const isVoterIdValid = await contract.methods.checkIfVoterIdExists(voterId).send({ from: currentAccount });
+                console.log("isVoterIdValid", isVoterIdValid)
                 if(!isVoterIdValid){
                     alert("Please Enter a valid voter ID");
                 }
                 else{
-                    const transaction = await contract.methods.vote(selectedCandidate).send({ from: currentAccount });
+                    const transaction = await contract.methods.vote(selectedCandidate, voterId).send({ from: currentAccount });
                     console.log('Transaction is done:', transaction);
                     const popuph2 = document.querySelector('.popup-h2');
                     const popupP = document.querySelector('.popup-p');

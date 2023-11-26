@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import "./UpdateCandi.css"
 
-const UpdateCandi = ({ state, refreshCandidateList }) => {
+const UpdateCandi = ({ state, refreshCandidateList, refreshEndTime }) => {
 
     const [input, setInput] = useState('');
     const [candidates, setCandidates] = useState([]);
     const [votingEndTime, setVotingEndTime] = useState(null);
+
+    const [candidateNameTextBox, setCandidateNameTextBox] = useState('');
 
     const saveCandidates = (arr) => {
         setCandidates(arr);
@@ -83,6 +85,7 @@ const UpdateCandi = ({ state, refreshCandidateList }) => {
             console.log('Transaction is done:', transaction);
             openPopup({ title: "Candidate Added", body: "The Candidate Is Added!" }, true);
             refreshCandidateList();
+            setCandidateNameTextBox("")
             document.getElementById('textInput').value="";
         }
     }
@@ -95,6 +98,7 @@ const UpdateCandi = ({ state, refreshCandidateList }) => {
         console.log("Transaction to update end time is done:", transac)
         setVotingEndTime(enteredTimeInEpoch)
         refreshCandidateList()
+        refreshEndTime();
     }
 
     return (
@@ -112,7 +116,7 @@ const UpdateCandi = ({ state, refreshCandidateList }) => {
                     <div className="input-button-container">
                         <div className="text_btn">
                             <h3 className="h3">Add Candidate!</h3>
-                            <input type="text" id="textInput" className="custom-input" />
+                            <input type="text" id="textInput" className="custom-input" value={candidateNameTextBox} onChange={(e) => setCandidateNameTextBox(e.target.value)}/>
                             <button onClick={AddCandi} className="custom-button">Click to Store</button>
                         </div>
                     </div>

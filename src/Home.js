@@ -46,7 +46,6 @@ const Home = () => {
                     : <></>}
                 <Leaderboard state={state} isAdminPage={false}/>
                 <Vote state={state}/>
-                <Footer></Footer>
             </div>
         </>
     );
