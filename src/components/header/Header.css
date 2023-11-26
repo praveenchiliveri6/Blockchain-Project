@@ -55,3 +55,9 @@
     color: #FF7F00; 
 }
 
+.adminButton:disabled {
+    background-color: #CCCCCC;
+    color: black; 
+    cursor: not-allowed; 
+    box-shadow: none; 
+}

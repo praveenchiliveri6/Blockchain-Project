@@ -6,6 +6,7 @@ import './Vote.css';
 const Vote = ({ state }) => {
 
     const [candidates, setCandidates] = useState([]);
+    const [voterId, setVoterId] = useState('');
 
     const saveCandidates= (arr) => {
         setCandidates(arr);
@@ -81,27 +82,47 @@ const Vote = ({ state }) => {
         const currentAccount = accounts[0];
 
         if (selectedCandidate) {
-            const transaction = await contract.methods.vote(selectedCandidate).send({ from: currentAccount });
-            console.log('Transaction is done:', transaction);
-            const popuph2 = document.querySelector('.popup-h2');
-            const popupP = document.querySelector('.popup-p');
-            const popupimg = document.querySelector('.img-popup');
-            if (popupimg) {
-                popupimg.classList.add('img-popup-tick');
+            const votingEndTime = await contract.methods.getVotingEndTime().call();
+            if (votingEndTime < Date.now()/1000){
+                alert("Voting Session is closed!")
+            } else{
+                const isVoterIdValid = await contract.methods.checkIfVoterIdExists(voterId).call();
+                if(!isVoterIdValid){
+                    alert("Please Enter a valid voter ID");
+                }
+                else{
+                    const transaction = await contract.methods.vote(selectedCandidate).send({ from: currentAccount });
+                    console.log('Transaction is done:', transaction);
+                    const popuph2 = document.querySelector('.popup-h2');
+                    const popupP = document.querySelector('.popup-p');
+                    const popupimg = document.querySelector('.img-popup');
+                    if (popupimg) {
+                        popupimg.classList.add('img-popup-tick');
+                    }
+                    popuph2.innerHTML = "Congratulations!"
+                    popupP.innerHTML = "Your Vote is Submitted!"
+                }
             }
-            popuph2.innerHTML = "Congratulations!"
-            popupP.innerHTML = "Your Vote is Submitted on the Blockchain!"
-            
         } else {
             console.log("No Candidate Selected, Caller: HandleVote")
         }
-
     };
 
     return (
         <>
         <CandidatesData saveCandidates={saveCandidates}/>
             <div className="body11">
+                <div className="text_input_container">
+                    <h3 className="input_label">VoterID:</h3>
+                    <input 
+                        type="text" 
+                        id="voterIdInput" 
+                        className="custom-input"
+                        placeholder="Enter your VoterID" 
+                        value={voterId}
+                        onChange={(e) => setVoterId(e.target.value)}
+                    />
+                </div>
                 <select
                     id="candidatesDropdown"
                     name="candidatesDropdown"

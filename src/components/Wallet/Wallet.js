@@ -1,6 +1,6 @@
 import Web3 from "web3";
 import { useState, useEffect } from "react";
-import ContractJSON from "./Contract.json"
+import ContractJSON from "../../build/contracts/VotingContract.json"
 
 
 const Wallet = ({ saveState, saveAccount, saveConnected}) => {
@@ -25,13 +25,13 @@ const Wallet = ({ saveState, saveAccount, saveConnected}) => {
                     await window.ethereum.request({ method: 'eth_requestAccounts' });
                     const contract = new web3.eth.Contract(
                         ABI,
-                        "0xB83d626e8B4e2a53891a8e5070Ad87cdc6C09394"
+                        "0x28Fbd0eC06D769170f8e5e6d6bfB4727662Aa21B"
                     );
                     const accounts = await web3.eth.getAccounts();
                     saveAccount && saveAccount(accounts);
+                    console.log("ACCOUNTS", accounts)
                     saveConnected && saveConnected(true);
                     saveState && saveState({ web3: web3, contract: contract, accounts: accounts });
-
                 } else {
                     alert("Please Install Metamask To Interact With This Application!");
                 }

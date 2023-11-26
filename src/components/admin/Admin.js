@@ -28,7 +28,7 @@ const Admin = () => {
             <Wallet saveState={saveState}></Wallet>
             <h4 className='adminHeading'>Admin Panel</h4>
             <UpdateCandi state={state} refreshCandidateList={refreshCandidateList}></UpdateCandi>
-            <Leaderboard state={state} isAdmin={true} refreshKey={refreshKey}></Leaderboard>
+            <Leaderboard state={state} isAdminPage={true} refreshKey={refreshKey}></Leaderboard>
             <Footer></Footer>
         </>
     );

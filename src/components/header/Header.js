@@ -11,6 +11,17 @@ const Header = () => {
 
     const [connected, setConnected] = useState(false);
 
+    const [state, setState] = useState({
+        web: null,
+        contract: null,
+        accounts: null
+    })
+    const saveState = (state) => {
+        setState(state);
+    }
+
+    const [isAdmin, setIsAdmin] = useState(false);
+
     const saveAccount = (account) => {
         setAccount(account);
     }
@@ -29,12 +40,22 @@ const Header = () => {
     const handleHomeClick = () => {
         navigate('/')
     }
-    
 
+    useEffect(() => {
+        const isAdmin = async () => {
+            const { contract, accounts } = state
+            if (!contract) {
+                return;
+            }
+            const isAdmin = await contract.methods.checkIfAdminUser(accounts[0]).call();
+            setIsAdmin(isAdmin)
+        };
+        isAdmin();
+    }, [state]);
 
     return (<>
 
-    <Wallet saveAccount={saveAccount} saveConnected={saveConnected}/>
+    <Wallet saveState={saveState} saveAccount={saveAccount} saveConnected={saveConnected}/>
 
         <div className="header">
             <h4 className="appName">BlockSmiths Voting System</h4>
@@ -43,7 +64,8 @@ const Header = () => {
             </button>
             {connected ? (
                 <>
-                    <button className="adminButton" onClick={handleAdminClick}>
+                    {console.log("IsADMIN", isAdmin)}
+                    <button className="adminButton" onClick={handleAdminClick} disabled={!isAdmin}>
                         Admin
                     </button>
                     <h3 className="connectStatus">Account Connected ({account[0]})</h3>

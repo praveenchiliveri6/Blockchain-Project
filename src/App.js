@@ -5,8 +5,6 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 function App({ }) {
 
-  const admin = "0x76D81132eb074d4d2277fB10FdF14177fBFA7341";
-
   return (
     <Router>
       <Header />
