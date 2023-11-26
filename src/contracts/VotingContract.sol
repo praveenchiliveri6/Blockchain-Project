@@ -10,7 +10,12 @@ contract VotingContract {
         uint voteCount;
     }
 
-    mapping(address => bool) public voters;
+    struct Voter {
+        uint voterId;
+        bool hasVoted;
+    }
+
+    mapping(address => Voter) public voters;
     mapping(uint => bool) public uniqueVoterIds;
     mapping(uint => Candidate) public candidates;
     mapping(address => bool) public adminAccountIds;
@@ -22,33 +27,43 @@ contract VotingContract {
         uint indexed _candidateId
     );
 
-    constructor () public {
-        // Initialize unique voter IDs
-        uniqueVoterIds[123] = true;
-        uniqueVoterIds[456] = true;
-        uniqueVoterIds[789] = true;
+    event voterRegisteredEvent (
+        address indexed _voterAddress,
+        uint indexed _voterId
+    );
 
+    constructor () public {
         // Initialize admin account IDs
         adminAccountIds[address(0xAe1DdF39a90FeeAc8708739aacCa6e8781daC6c6)] = true;
         adminAccountIds[address(0xAe1DdF39a90FeeAc8708739aacCa6e8781daC6c6)] = true;
         adminAccountIds[address(0x4b3527ad07fA1Ab3E7bFe83ec18cC6cB57d6c908)] = true;
-        adminAccountIds[address(0x76D81132eb074d4d2277fB10FdF14177fBFA7341)] = true;
+
+        votingEndTime = block.timestamp;
     }
 
     function addCandidate(string memory _name) public {
         require(adminAccountIds[msg.sender], "Only admin accounts can add the candidate"); // Check if msg.sender is an admin
         candidatesCount++;
         candidates[candidatesCount] = Candidate(candidatesCount, _name, 0);
-        
     }
 
-    function vote (uint _candidateId) public {
+    function vote (uint _candidateId, uint _voterId) public {
         require(block.timestamp < votingEndTime, "Voting has ended");
-        require(!voters[msg.sender], "You have already voted");
-        voters[msg.sender] = true;
+        require(voters[msg.sender].voterId != 0, "Voter not registered");
+        require(voters[msg.sender].voterId == _voterId, "InvalidVoterId" );
+        require(!voters[msg.sender].hasVoted, "You have already voted");
+        voters[msg.sender].hasVoted = true;
         voterAddresses.push(msg.sender);
         candidates[_candidateId].voteCount++;
         emit votedEvent(_candidateId);
+    }
+
+    function registerVoter(uint _voterId, address _voterAddress) public{
+        require(uniqueVoterIds[_voterId] && voters[_voterAddress].voterId!=0, "Already with same voter Id exists in Pool" );
+        voters[_voterAddress] = Voter(_voterId, false);
+        uniqueVoterIds[_voterId] = true;
+        voterAddresses.push(_voterAddress);
+        emit voterRegisteredEvent(_voterAddress, _voterId);
     }
 
     function getCandidates() public view returns (Candidate[] memory) {
@@ -70,8 +85,8 @@ contract VotingContract {
         votingEndTime = newTimeStamp;
     }
 
-    function checkIfVoterIdExists(uint voterId) public view returns (bool) {
-        return uniqueVoterIds[voterId];
+    function checkIfVoterIdExists(uint _voterId) public view returns (bool) {
+        return uniqueVoterIds[_voterId] && voters[msg.sender].voterId == _voterId;
     }
 
     // Updated function to check if an admin account exists
@@ -90,10 +105,14 @@ contract VotingContract {
 
         // Reset voters
         for (uint i = 0; i < voterAddresses.length; i++) {
-            voters[voterAddresses[i]] = false;
+            delete uniqueVoterIds[voters[voterAddresses[i]].voterId];
+            delete voters[voterAddresses[i]];
+            
         }
 
-        // Update voting end time to the current block timestamp
+        delete voterAddresses;
+
+        // Update voting end time to the given timestamp
         votingEndTime = newTimeStamp;
     }
 
