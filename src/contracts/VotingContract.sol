@@ -78,7 +78,7 @@ contract VotingContract {
         return adminAccountIds[adminAccountId];
     } 
 
-    function startNewPoll() public {
+    function startNewPoll(uint newTimeStamp) public {
         require(adminAccountIds[msg.sender], "Only admin accounts can start a new poll");
 
         // Clear candidates
@@ -93,7 +93,7 @@ contract VotingContract {
         }
 
         // Update voting end time to the current block timestamp
-        votingEndTime = block.timestamp;
+        votingEndTime = newTimeStamp;
     }
 
     function getWinner() public view returns (string memory) {
