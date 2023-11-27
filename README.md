@@ -21,7 +21,9 @@ cd Blockchain-Project
 ```
 
 Quickstart the blockchain network in the ganache application, add the ganache test network into the metamask, import the private key of any ganache ethereum wallet address into metamask.
+
 Add a new Admin address(Ethereum Wallet Address) in the constructor of src/contracts/VotingContract.sol file.
+
 update new Admin address(Ethereum Wallet Address) in the src/components/updateCandidate/UpdateCandi.js file.
 
 To build and deploy smart contract on ganache network:
@@ -33,6 +35,7 @@ cd ..
 ```
 
 Get the smart contract address of the above deployed contract.
+
 update the contract address of the above deployed contract in src/components/Wallet/Wallet.js
 
 Install Dependencies:
